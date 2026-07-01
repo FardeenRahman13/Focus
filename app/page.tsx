@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import LiquidBackground from './LiquidBackground';
 
 // ─── Types ───────────────────────────────────────────────
 interface Task {
@@ -578,8 +579,9 @@ export default function Home() {
   }, []);
 
   return (
-    <main style={{ minHeight: '100vh', background: '#0a0a0a', padding: '40px 20px' }}>
-      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+    <main style={{ minHeight: '100vh', background: '#0a0a0a', padding: '40px 20px', position: 'relative' }}>
+      <LiquidBackground />
+      <div style={{ maxWidth: 1100, margin: '0 auto', position: 'relative', zIndex: 1 }}>
 
         {/* Header */}
         <div style={{ marginBottom: 40 }}>
@@ -600,7 +602,7 @@ export default function Home() {
         <CalendarAndChart focusLog={focusLog} />
 
 
-        <p style={{ color: '#2a2a2a', fontSize: 12, textAlign: 'center', marginTop: 40 }}>“There is nothing impossible to him who will try.” ― Alexander the Great</p>
+        <p style={{ color: '#2a2a2a', fontSize: 12, textAlign: 'center', marginTop: 40 }}>built for deep work</p>
       </div>
     </main>
   );
