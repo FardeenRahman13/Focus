@@ -49,7 +49,7 @@ float fbm(vec2 p) {
 
 void main() {
   vec2 uv = (gl_FragCoord.xy - 0.5 * u_res) / min(u_res.x, u_res.y);
-  float t  = u_time * 0.12;
+  float t  = u_time * 0.04;
 
   // Domain warp — two layers of fbm
   vec2 q = vec2(fbm(uv + t), fbm(uv + vec2(5.2, 1.3) + t * 0.8));
