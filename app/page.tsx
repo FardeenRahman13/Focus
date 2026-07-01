@@ -121,7 +121,7 @@ function Randomizer() {
 
 // ─── Pomodoro ────────────────────────────────────────────
 const MODES = {
-  work:  { label: 'Focus',       duration: 25 * 60 },
+  work:  { label: 'Focus',       duration: 50 * 60 },
   short: { label: 'Short Break', duration:  5 * 60 },
   long:  { label: 'Long Break',  duration: 15 * 60 },
 } as const;
@@ -199,9 +199,9 @@ function Pomodoro({ onSessionComplete }: { onSessionComplete: (mins: number) => 
               style={{ transition: 'stroke-dashoffset 0.5s linear' }}
             />
           </svg>
-          <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2 }}>
-            <span style={{ fontFamily: 'monospace', fontSize: 38, fontWeight: 700, color: '#f0f0f0', letterSpacing: 2, lineHeight: 1 }}>{mm}:{ss}</span>
-            <span style={{ color: '#555', fontSize: 12, lineHeight: 1 }}>{MODES[mode].label}</span>
+          <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 0 }}>
+            <span style={{ fontFamily: 'monospace', fontSize: 38, fontWeight: 700, color: '#f0f0f0', letterSpacing: 0, lineHeight: 1 }}>{mm}:{ss}</span>
+            <span style={{ color: '#555', fontSize: 12, lineHeight: 1, marginTop: 3 }}>{MODES[mode].label}</span>
           </div>
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
@@ -600,7 +600,7 @@ export default function Home() {
         <CalendarAndChart focusLog={focusLog} />
 
 
-        <p style={{ color: '#2a2a2a', fontSize: 12, textAlign: 'center', marginTop: 40 }}>built for deep work</p>
+        <p style={{ color: '#2a2a2a', fontSize: 12, textAlign: 'center', marginTop: 40 }}>“There is nothing impossible to him who will try.” ― Alexander the Great</p>
       </div>
     </main>
   );
