@@ -161,6 +161,25 @@ function Pomodoro({ onSessionComplete }: { onSessionComplete: (mins: number) => 
           endTimeRef.current = null;
           document.title = 'focus.tools';
           onSessionComplete(Math.round(totalSeconds / 60));
+          // Synthesized alarm — three short robotic tones
+          try {
+            const ctx = new AudioContext();
+            const beeps = [0, 0.18, 0.36];
+            beeps.forEach(offset => {
+              const osc = ctx.createOscillator();
+              const gain = ctx.createGain();
+              osc.connect(gain);
+              gain.connect(ctx.destination);
+              osc.type = 'sine';
+              osc.frequency.setValueAtTime(880, ctx.currentTime + offset);
+              osc.frequency.setValueAtTime(660, ctx.currentTime + offset + 0.07);
+              gain.gain.setValueAtTime(0, ctx.currentTime + offset);
+              gain.gain.linearRampToValueAtTime(0.18, ctx.currentTime + offset + 0.01);
+              gain.gain.linearRampToValueAtTime(0, ctx.currentTime + offset + 0.14);
+              osc.start(ctx.currentTime + offset);
+              osc.stop(ctx.currentTime + offset + 0.15);
+            });
+          } catch {}
           return;
         }
         setSeconds(remaining);
