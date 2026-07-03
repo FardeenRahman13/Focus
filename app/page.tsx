@@ -135,27 +135,55 @@ function Pomodoro({ onSessionComplete }: { onSessionComplete: (mins: number) => 
   const [running, setRunning] = useState(false);
   const [customMinutes, setCustomMinutes] = useState('');
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const endTimeRef = useRef<number | null>(null); // wall-clock timestamp when timer will hit 0
 
   const reset = useCallback((m: Mode) => {
     setRunning(false);
     if (intervalRef.current) clearInterval(intervalRef.current);
+    endTimeRef.current = null;
     setMode(m);
     setSeconds(MODES[m].duration);
     setTotalSeconds(MODES[m].duration);
+    document.title = 'focus.tools';
   }, []);
 
   useEffect(() => {
     if (running) {
+      // Set the wall-clock end time when we start/resume
+      endTimeRef.current = Date.now() + seconds * 1000;
+
       intervalRef.current = setInterval(() => {
-        setSeconds(s => {
-          if (s <= 1) { clearInterval(intervalRef.current!); setRunning(false); onSessionComplete(Math.round(totalSeconds / 60)); return 0; }
-          return s - 1;
-        });
-      }, 1000);
+        const remaining = Math.round((endTimeRef.current! - Date.now()) / 1000);
+        if (remaining <= 0) {
+          clearInterval(intervalRef.current!);
+          setRunning(false);
+          setSeconds(0);
+          endTimeRef.current = null;
+          document.title = 'focus.tools';
+          onSessionComplete(Math.round(totalSeconds / 60));
+          return;
+        }
+        setSeconds(remaining);
+        // Update tab title
+        const m = String(Math.floor(remaining / 60)).padStart(2, '0');
+        const s = String(remaining % 60).padStart(2, '0');
+        document.title = `${m}:${s} — focus.tools`;
+      }, 500); // poll every 500ms so it's always accurate, never drifts
     } else {
       if (intervalRef.current) clearInterval(intervalRef.current);
+      endTimeRef.current = null;
+      if (seconds > 0 && seconds < totalSeconds) {
+        // Paused — show paused time in title
+        const m = String(Math.floor(seconds / 60)).padStart(2, '0');
+        const s = String(seconds % 60).padStart(2, '0');
+        document.title = `${m}:${s} — focus.tools`;
+      } else {
+        document.title = 'focus.tools';
+      }
     }
-    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
   }, [running]);
 
   const mm = String(Math.floor(seconds / 60)).padStart(2, '0');

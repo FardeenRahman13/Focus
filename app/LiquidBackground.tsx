@@ -65,7 +65,7 @@ void main() {
   metal = mix(metal, vec3(0.18, 0.10, 0.28), bright * 0.18);
 
   // Keep overall opacity low so it stays behind the UI
-  gl_FragColor = vec4(metal, 0.18);
+  gl_FragColor = vec4(metal, 0.10);
 }
 `;
 
