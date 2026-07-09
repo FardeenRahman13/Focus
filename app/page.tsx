@@ -144,7 +144,7 @@ function Pomodoro({ onSessionComplete }: { onSessionComplete: (mins: number) => 
     setMode(m);
     setSeconds(MODES[m].duration);
     setTotalSeconds(MODES[m].duration);
-    document.title = 'focus.tools';
+    document.title = 'Zoned';
   }, []);
 
   useEffect(() => {
@@ -159,7 +159,7 @@ function Pomodoro({ onSessionComplete }: { onSessionComplete: (mins: number) => 
           setRunning(false);
           setSeconds(0);
           endTimeRef.current = null;
-          document.title = 'focus.tools';
+          document.title = 'Zoned';
           onSessionComplete(Math.round(totalSeconds / 60));
           // Synthesized alarm — three short robotic tones
           try {
@@ -186,7 +186,7 @@ function Pomodoro({ onSessionComplete }: { onSessionComplete: (mins: number) => 
         // Update tab title
         const m = String(Math.floor(remaining / 60)).padStart(2, '0');
         const s = String(remaining % 60).padStart(2, '0');
-        document.title = `${m}:${s} — focus.tools`;
+        document.title = `${m}:${s} — Zoned`;
       }, 500); // poll every 500ms so it's always accurate, never drifts
     } else {
       if (intervalRef.current) clearInterval(intervalRef.current);
@@ -195,9 +195,9 @@ function Pomodoro({ onSessionComplete }: { onSessionComplete: (mins: number) => 
         // Paused — show paused time in title
         const m = String(Math.floor(seconds / 60)).padStart(2, '0');
         const s = String(seconds % 60).padStart(2, '0');
-        document.title = `${m}:${s} — focus.tools`;
+        document.title = `${m}:${s} — Zoned`;
       } else {
-        document.title = 'focus.tools';
+        document.title = 'Zoned';
       }
     }
     return () => {
@@ -252,27 +252,40 @@ function Pomodoro({ onSessionComplete }: { onSessionComplete: (mins: number) => 
             <span style={{ color: '#555', fontSize: 12, lineHeight: 1, marginTop: 3 }}>{MODES[mode].label}</span>
           </div>
         </div>
-        <div style={{ display: 'flex', gap: 10 }}>
-          <button onClick={() => setRunning(r => !r)} style={{
-            background: '#7C3AED', border: 'none', borderRadius: 10,
-            padding: '11px 28px', color: '#fff', fontWeight: 700, fontSize: 15, cursor: 'pointer', minWidth: 100
-          }}>{running ? 'Pause' : seconds === 0 ? 'Done' : 'Start'}</button>
-          <button onClick={() => reset(mode)} style={{
-            background: '#1a1a1a', border: '1px solid #2a2a2a', borderRadius: 10,
-            padding: '11px 18px', color: '#666', fontWeight: 600, fontSize: 14, cursor: 'pointer'
-          }}>Reset</button>
-        </div>
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          <input type="text" inputMode="numeric" value={customMinutes}
-            onChange={e => setCustomMinutes(e.target.value.replace(/\D/g, ''))}
-            onKeyDown={e => e.key === 'Enter' && applyCustom()}
-            placeholder="Custom mins"
-            style={{ width: 110, background: '#1a1a1a', border: '1px solid #2a2a2a', borderRadius: 8, padding: '7px 10px', color: '#f0f0f0', fontSize: 13, outline: 'none' }}
-          />
-          <button onClick={applyCustom} style={{
-            background: 'none', border: '1px solid #7C3AED', borderRadius: 8,
-            padding: '7px 14px', color: '#7C3AED', fontWeight: 600, fontSize: 13, cursor: 'pointer'
-          }}>Set</button>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: 10, width: '100%', maxWidth: 220 }}>
+          {/* Start / Pause / Done + Reset */}
+          <div style={{ display: 'flex', gap: 10 }}>
+            <button
+              onClick={() => {
+                if (seconds === 0) {
+                  reset(mode); // Done → just reset, don't log again
+                } else {
+                  setRunning(r => !r);
+                }
+              }}
+              style={{
+                flex: 1, background: '#7C3AED', border: 'none', borderRadius: 10,
+                padding: '11px 0', color: '#fff', fontWeight: 700, fontSize: 15, cursor: 'pointer'
+              }}
+            >{running ? 'Pause' : seconds === 0 ? 'Done' : 'Start'}</button>
+            <button onClick={() => reset(mode)} style={{
+              flex: 1, background: '#1a1a1a', border: '1px solid #2a2a2a', borderRadius: 10,
+              padding: '11px 0', color: '#666', fontWeight: 600, fontSize: 14, cursor: 'pointer'
+            }}>Reset</button>
+          </div>
+          {/* Custom mins — same width as row above */}
+          <div style={{ display: 'flex', gap: 10 }}>
+            <input type="text" inputMode="numeric" value={customMinutes}
+              onChange={e => setCustomMinutes(e.target.value.replace(/\D/g, ''))}
+              onKeyDown={e => e.key === 'Enter' && applyCustom()}
+              placeholder="Custom mins"
+              style={{ flex: 1, background: '#1a1a1a', border: '1px solid #2a2a2a', borderRadius: 10, padding: '11px 10px', color: '#f0f0f0', fontSize: 13, outline: 'none' }}
+            />
+            <button onClick={applyCustom} style={{
+              flex: 1, background: 'none', border: '1px solid #7C3AED', borderRadius: 10,
+              padding: '11px 0', color: '#7C3AED', fontWeight: 600, fontSize: 13, cursor: 'pointer'
+            }}>Set</button>
+          </div>
         </div>
       </div>
     </div>
@@ -633,7 +646,7 @@ export default function Home() {
         {/* Header */}
         <div style={{ marginBottom: 40 }}>
           <h1 style={{ fontSize: 28, fontWeight: 800, color: '#f0f0f0', letterSpacing: '-1px', marginBottom: 4 }}>
-            focus<span style={{ color: '#7C3AED' }}>.</span>tools
+            Zoned
           </h1>
           <p style={{ color: '#555', fontSize: 14 }}>Roll a task. Time your session. Stay on track.</p>
         </div>
